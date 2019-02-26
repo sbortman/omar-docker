@@ -76,8 +76,6 @@ assets {
 	minifyCss = true
 }
 
-
-import com.bmuschko.gradle.docker.DockerRegistryCredentials
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
 import com.bmuschko.gradle.docker.tasks.image.DockerTagImage
@@ -144,7 +142,6 @@ task tagImage( type: DockerTagImage, dependsOn: buildImage ) {
 }
 
 docker {
-	
 	registryCredentials {
 		url = dockerRegistry
 		username = System.getenv( 'QUAY_USERNAME' )
@@ -159,6 +156,4 @@ task pushImage( type: DockerPushImage, dependsOn: tagImage ) {
 
 	tag = projectVersion
 	imageName = "${ dockerRegistry }/${ dockerRepo }/${ project.name }".toString()
-	
-
 }
