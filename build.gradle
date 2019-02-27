@@ -120,15 +120,19 @@ task createDockerfile( type: Dockerfile, dependsOn: prepareDocker ) {
 
 //	entryPoint '/app/app-entrypoint.sh'
 	defaultCommand '/app/app-entrypoint.sh'
+	
+	onlyIf {
+		!file( "${ projectDir }/src/main/docker/Dockerfile" ).exists()
+	}
 }
 
 task buildImage( type: DockerBuildImage, dependsOn: createDockerfile ) {
-	description = 'Create Docker image to run the Grails application'
-	group = 'Docker'
-	
-	inputDir = file( dockerBuildDir )
-	
-	tags = [ "${ project.dockerTag }".toString() ]
+		description = 'Create Docker image to run the Grails application'
+		group = 'Docker'
+		
+		inputDir = file( dockerBuildDir )
+		
+		tags = [ "${ project.dockerTag }".toString() ]
 }
 
 task tagImage( type: DockerTagImage, dependsOn: buildImage ) {
@@ -153,7 +157,7 @@ docker {
 task pushImage( type: DockerPushImage, dependsOn: tagImage ) {
 	group = 'Docker'
 	description = "Push custom docker image."
-
+	
 	tag = projectVersion
 	imageName = "${ dockerRegistry }/${ dockerRepo }/${ project.name }".toString()
 }
